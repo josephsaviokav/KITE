@@ -1,0 +1,12 @@
+:root{
+  background: linear-gradient(300deg, #aa122b, #000000);
+  color: #151615;
+}
+.movies-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  padding: 1rem;
+  width: 100%;
+  box-sizing: border-box;
+}

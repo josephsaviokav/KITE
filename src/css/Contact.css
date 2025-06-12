@@ -1,0 +1,51 @@
+.contact-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 90vh;
+  padding: 20px;
+  /* Match navbar gradient */
+  background: linear-gradient(300deg, #aa122b, #000000);
+}
+
+.contact-card {
+  background: linear-gradient(300deg, #df0c28, #000000); /* slightly transparent to blend with bg */
+  color: #c9d1d9;
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+  text-align: center;
+  max-width: 400px;
+  width: 100%;
+  transition: transform 0.3s ease;
+}
+
+.contact-card:hover {
+  transform: translateY(-5px);
+}
+
+.contact-avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 3px solid #ff5858;
+  margin-bottom: 20px;
+}
+
+.contact-button {
+  display: inline-block;
+  margin-top: 20px;
+  padding: 10px 20px;
+  background: #238636;
+  color: #ffffff;
+  text-decoration: none;
+  border-radius: 8px;
+  transition: background 0.3s ease, transform 0.3s ease;
+
+}
+
+.contact-button:hover {
+  background: #2ea043;
+    transform: scale(1.1);
+    color: #171616;
+}

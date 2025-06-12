@@ -1,0 +1,102 @@
+/* Player.css */
+
+.player-container {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  bottom: 10px;
+  max-width: 80%;
+  background: #1e1e1e;
+  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.4);
+  padding: 0.5rem 1rem; /* Reduced padding */
+  z-index: 1000;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem; /* Smaller gap */
+ border-radius: 20px;
+  overflow: hidden;
+  transition: 1s ease-in-out;
+}
+
+.progress-bar {
+  width: 100%;
+  accent-color: #e21616;
+  height: 4px; /* Optionally reduce height */
+  cursor: pointer;
+  top:10px;
+  position: relative;
+}
+
+
+
+.player-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem; 
+  top: 15px;
+  position: relative;
+}
+
+.album-cover {
+  width: 40px; 
+  height: 40px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.track-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.track-title {
+  font-size: 0.95rem; /* Smaller font */
+  font-weight: 600;
+  margin: 0;
+}
+
+.track-artist {
+  font-size: 0.8rem; /* Smaller font */
+  color: #ccc;
+  margin: 0;
+}
+
+.player-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem; /* Reduced gap */
+  bottom: 10px;
+  position: relative;
+}
+
+.control-button,
+.play-button {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+.control-button:hover,
+.play-button:hover {
+  transform: scale(1.1);
+  color:red;
+}
+.play-button {
+  background-color: #ae1b1b;
+  border-radius: 30px;
+  padding: 0.5rem; /* Smaller button */
+  font-size: 0.9rem;
+  color: #ccc;
+  width: 100px;
+  text-align: center;
+}
+
+.play-button:hover {
+  background-color: #c11010;
+  color: black;
+}
