@@ -1,85 +1,119 @@
-import { useState, useRef, useEffect } from "react";
-import { Play, Pause, SkipForward, SkipBack } from "lucide-react";
-import "../css/Player.css"; // <-- Import the CSS file
+import { useRef, useEffect, useState } from "react";
+import { Play, Pause, Volume2, VolumeX } from "lucide-react";
+import "../css/Player.css";
 
-export default function Player() {
+export default function Player({ currentSong, isPlaying, onPlayPause }) {
   const audioRef = useRef(null);
-  const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
-   
-  const togglePlay = () => {
-    if (isPlaying) {
-      audioRef.current.pause();
-    } else {
-      audioRef.current.play();
+  const [isMuted, setIsMuted] = useState(false);
+
+  const togglePlay = async () => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    try {
+      if (isPlaying) {
+        audio.pause();
+        onPlayPause(false);
+      } else {
+        await audio.play();
+        onPlayPause(true);
+      }
+    } catch (err) {
+      console.error("Playback error:", err);
+      onPlayPause(false);
     }
-    setIsPlaying(!isPlaying);
   };
 
-  const handleProgressChange = (e) => {
-    const value = e.target.value;
-    audioRef.current.currentTime = (value / 100) * duration;
+  const updateProgress = () => {
+    const audio = audioRef.current;
+    if (audio && duration > 0) {
+      setProgress((audio.currentTime / duration) * 100);
+    }
+  };
+
+  const handleSeek = (e) => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    const value = Number(e.target.value);
+    audio.currentTime = (value / 100) * duration;
     setProgress(value);
+  };
+
+  const toggleMute = () => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    audio.muted = !isMuted;
+    setIsMuted(!isMuted);
   };
 
   useEffect(() => {
     const audio = audioRef.current;
-    const updateProgress = () => {
-      const current = audio.currentTime;
-      const total = audio.duration;
-      setDuration(total);
-      setProgress((current / total) * 100);
+    if (!audio || !currentSong?.sourcepath) return;
+
+    // Set up audio source
+    audio.src = currentSong.sourcepath;
+    audio.load();
+
+    const handleLoadedMetadata = () => {
+      setDuration(audio.duration || 0);
+      if (isPlaying) {
+        audio.play().catch(err => {
+          console.error("Auto-play failed:", err);
+          onPlayPause(false);
+        });
+      }
     };
+
+    const handleEnded = () => onPlayPause(false);
+
+    audio.addEventListener("loadedmetadata", handleLoadedMetadata);
     audio.addEventListener("timeupdate", updateProgress);
+    audio.addEventListener("ended", handleEnded);
+
     return () => {
+      audio.pause();
+      audio.removeEventListener("loadedmetadata", handleLoadedMetadata);
       audio.removeEventListener("timeupdate", updateProgress);
+      audio.removeEventListener("ended", handleEnded);
     };
-  }, []);
+  }, [currentSong?.sourcepath]);
 
   return (
     <div className="player-container">
-      <audio
-        ref={audioRef}
-        src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
-      />
-
-      <input
-        type="range"
-        min="0"
-        max="100"
-        step="0.1"
-        value={progress}
-        onChange={handleProgressChange}
-        className="progress-bar"
-      />
+      <audio ref={audioRef} preload="auto" />
 
       <div className="player-info">
         <img
-          src="https://c.saavncdn.com/858/Ember-English-2017-20170915151516-50x50.jpg"
-          alt="Album Cover"
+          src={currentSong?.primaryImage || "https://placehold.co/150?text=No+Cover"}
+          alt={currentSong?.title || "No Cover"}
           className="album-cover"
         />
-        <div className="track-details">
-          <h2 className="track-title">Ember</h2>
-          <p className="track-artist">Billie Eilish</p>
+        <div className="track-info">
+          <h3>{currentSong?.title || "No song selected"}</h3>
+          <p>{currentSong?.artist || "Unknown Artist"}</p>
         </div>
       </div>
 
       <div className="player-controls">
-        <button  className="control-button">
-          <SkipBack size={24} />
+        <input
+          type="range"
+          min="0"
+          max="100"
+          value={progress}
+          onChange={handleSeek}
+          className="progress-bar"
+        />
+
+        <button onClick={togglePlay} className="play-button" aria-label="Play/Pause">
+          {isPlaying ? <Pause size={24} /> : <Play size={24} />}
         </button>
 
-        <button onClick={togglePlay} className="play-button">
-          {isPlaying ? <Pause size={28} /> : <Play size={28} />}
-        </button>
-
-        <button  className="control-button">
-          <SkipForward size={24} />
+        <button onClick={toggleMute} className="volume-button" aria-label="Mute/Unmute">
+          {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
         </button>
       </div>
-      
     </div>
   );
 }

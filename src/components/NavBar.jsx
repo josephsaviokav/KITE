@@ -33,7 +33,10 @@ function NavBar() {
       </div>
     
       <div class="submenu-item">
-        <a href="#" class="submenu-link"> Api info </a>
+       <a href="https://saavn.dev/" 
+       target="_blank" 
+       rel="noopener noreferrer"
+       class="submenu-link"> Api info </a>
       </div>
       <div class="submenu-item">
        <Link to="../pages/Contact" class="submenu-link"> Developer </Link>

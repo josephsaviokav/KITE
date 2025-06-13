@@ -1,240 +1,159 @@
-import SongCard from "../components/SongCard";
-// import { useState } from "react";
 import { useState, useEffect } from "react";
+import { fetchSongs } from "../utils/api";
+import SongCard from "../components/SongCard";
 import LoadingScreen from "../components/LoadingScreen";
-import "../css/Home.css";
 import Player from "../components/Player";
-// import LoadingScreen from "../components/LoadingScreen";
-// import { useNavigate } from "react-router-dom";
-
-// function Home() {
-//   // const [searchQuery, setSearchQuery] = useState("");
-//   const [loading, setLoading] = useState(false);
-//   const navigate = useNavigate();
-
-//   const songs = [
-//     {
-//       id: "1",
-//       title: "Shape of You",
-//       primaryTitle: "Shape of You",
-//       releaseDate: "2017",
-//       artist: "Ed Sheeran",
-//       primaryImage:
-//         "https://i.scdn.co/image/ab67616d0000b273ba5db46f4b838ef6027e6f96",
-//       sourcepath: "/shapeofyou.mp3",
-//       runtime: "3:55",
-//     },
-//     {
-//       id: "2",
-//       title: "Believer",
-//       primaryTitle: "Believer",
-//       releaseDate: "2019",
-//       artist: "Imagine Dragons",
-//       primaryImage:
-//         "https://i.scdn.co/image/ab67616d0000b2735675e83f707f1d7271e5cf8a",
-//       sourcepath: "/believer.mp3",
-//     },
-//     {
-//       id: "3",
-//       title: "Blinding Lights",
-//       primaryTitle: "Blinding Lights",
-//       releaseDate: "2019",
-//       artist: "The Weeknd",
-//       primaryImage:
-//         "https://i.scdn.co/image/ab67616d0000b2738863bc11d2aa12b54f5aeb36",
-//       sourcepath: "/blindinglights.mp3",
-//     },
-//     {
-//       id: "4",
-//       title: "No Time To Die",
-//       primaryTitle: "No Time To Die",
-//       releaseDate: "2021",
-//       artist: "Billie Eilish",
-//       primaryImage:
-//         "https://i.scdn.co/image/ab67616d0000b273f7b7174bef6f3fbfda3a0bb7",
-//       sourcepath: "/notimetodie.mp3",
-//     },
-//     {
-//       id: "5",
-//       title: "Twisted Nerve",
-//       primaryTitle: "Twisted Nerve",
-//       releaseDate: "1968",
-//       artist: "Bernard Herrmann",
-//       primaryImage:
-//         "https://i.scdn.co/image/ab67616d0000b273fecfac11994325a39cd03dec",
-//       runtime: "3:55",
-//       sourcepath: "/twistednerve.mp3",
-//     },
-//   ];
-
-//   const handleSearch = (e) => {
-//     e.preventDefault();
-//     setSearchQuery(e.target.value);
-//   };
-
-//   const handleClick = (song) => {
-//     navigate(`/player/${song.id}`, { state: { song } });
-//   };
-
-//   return (
-//     <div className="home">
-//       {loading ? (
-//         <div className="loading">
-//           <LoadingScreen />
-//         </div>
-//       ) : (
-//         <div className="movies-grid">
-
-//           {songs.map((song) => (
-//             <div
-//               key={song.id}
-//               onClick={() => handleClick(song)}
-//               style={{ cursor: "pointer" }}
-//             >
-//               <SongCard song={song} />
-//             </div>
-//           ))}
-//         </div>
-//       )}
-//     </div>
-//   );
-// }
-
-// export default Home;
+import "../css/Home.css";
 
 export default function Home() {
-     const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(true);
-  const songs = [
-    {
-      id: "1",
-      title: "Shape of You",
-      primaryTitle: "Shape of You",
-      releaseDate: "2017",
-      artist: "Ed Sheeran",
-      primaryImage:
-        "https://i.scdn.co/image/ab67616d0000b273ba5db46f4b838ef6027e6f96",
-      sourcepath: "/shapeofyou.mp3",
-      runtime: "3:55",
-    },
-    {
-      id: "2",
-      title: "Believer",
-      primaryTitle: "Believer",
-      releaseDate: "2019",
-      artist: "Imagine Dragons",
-      primaryImage:
-        "https://i.scdn.co/image/ab67616d0000b2735675e83f707f1d7271e5cf8a",
-      sourcepath: "/believer.mp3",
-    },
-    {
-      id: "3",
-      title: "Blinding Lights",
-      primaryTitle: "Blinding Lights",
-      releaseDate: "2019",
-      artist: "The Weeknd",
-      primaryImage:
-        "https://i.scdn.co/image/ab67616d0000b2738863bc11d2aa12b54f5aeb36",
-      sourcepath: "/blindinglights.mp3",
-    },
-    {
-      id: "4",
-      title: "No Time To Die",
-      primaryTitle: "No Time To Die",
-      releaseDate: "2021",
-      artist: "Billie Eilish",
-      primaryImage:
-        "https://i.scdn.co/image/ab67616d0000b273f7b7174bef6f3fbfda3a0bb7",
-      sourcepath: "/notimetodie.mp3",
-    },
-    {
-      id: "5",
-      title: "Twisted Nerve",
-      primaryTitle: "Twisted Nerve",
-      releaseDate: "1968",
-      artist: "Bernard Herrmann",
-      primaryImage:
-        "https://i.scdn.co/image/ab67616d0000b273fecfac11994325a39cd03dec",
-      runtime: "3:55",
-      sourcepath: "/twistednerve.mp3",
-    },
-     {
-      id: "1",
-      title: "Shape of You",
-      primaryTitle: "Shape of You",
-      releaseDate: "2017",
-      artist: "Ed Sheeran",
-      primaryImage:
-        "https://i.scdn.co/image/ab67616d0000b273ba5db46f4b838ef6027e6f96",
-      sourcepath: "/shapeofyou.mp3",
-      runtime: "3:55",
-    },
-    {
-      id: "2",
-      title: "Believer",
-      primaryTitle: "Believer",
-      releaseDate: "2019",
-      artist: "Imagine Dragons",
-      primaryImage:
-        "https://i.scdn.co/image/ab67616d0000b2735675e83f707f1d7271e5cf8a",
-      sourcepath: "/believer.mp3",
-    },
-    {
-      id: "3",
-      title: "Blinding Lights",
-      primaryTitle: "Blinding Lights",
-      releaseDate: "2019",
-      artist: "The Weeknd",
-      primaryImage:
-        "https://i.scdn.co/image/ab67616d0000b2738863bc11d2aa12b54f5aeb36",
-      sourcepath: "/blindinglights.mp3",
-    },
-    {
-      id: "4",
-      title: "No Time To Die",
-      primaryTitle: "No Time To Die",
-      releaseDate: "2021",
-      artist: "Billie Eilish",
-      primaryImage:
-        "https://i.scdn.co/image/ab67616d0000b273f7b7174bef6f3fbfda3a0bb7",
-      sourcepath: "/notimetodie.mp3",
-    },
-    {
-      id: "5",
-      title: "Twisted Nerve",
-      primaryTitle: "Twisted Nerve",
-      releaseDate: "1968",
-      artist: "Bernard Herrmann",
-      primaryImage:
-        "https://i.scdn.co/image/ab67616d0000b273fecfac11994325a39cd03dec",
-      runtime: "3:55",
-      sourcepath: "/twistednerve.mp3",
-    },
-  ];
+  const [state, setState] = useState({
+    error: null,
+    loading: false,
+    searchQuery: "",
+    songs: [],
+    currentSong: null,
+    isPlaying: false
+  });
 
-    return( <div className="home">
-    <form className="search-form">
-  <input type="text" placeholder="What do you want to play?" />
-  
-<button class="button">
-  <span class="span">🔎</span>
-</button>
-</form>
+  const formatDuration = (seconds) => {
+    if (!seconds) return "3:30";
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
 
-        {error && <div className="error-message">{error}</div>}
+  const handleSongSelect = (song) => {
+    if (!song?.sourcepath) {
+      alert("Song URL is invalid or missing.");
+      return;
+    }
+    console.log("Selected:", song.title, "→ URL:", song.sourcepath);
+    setState(prev => ({
+      ...prev,
+      currentSong: song,
+      isPlaying: true
+    }));
+  };
 
-      {loading ? (
-        <div className="loading"><LoadingScreen /></div>
-      ) : (
-        <div className="movies-grid">
-          {songs.map((song) => (
-            <SongCard song={song} key={song.id} />
-          ))}
+  const searchSongs = async (query) => {
+    try {
+      setState(prev => ({ ...prev, loading: true, error: null }));
+
+      const results = await fetchSongs(query);
+
+      if (!results || results.length === 0) {
+        throw new Error("No songs found. Try a different search term.");
+      }
+
+      const formattedSongs = results.map((song, index) => ({
+        id: song.id || song.perma_url || `song-${index}`,
+        title: song.song || song.heading?.title || "Untitled Track",
+        artist: song.primary_artists || song.artist?.name || song.heading?.subtitle || "Unknown Artist",
+        primaryImage: song.image?.replace("150x150", "500x500") ||
+                     song.image?.replace("150", "500") ||
+                     song.thumbnail ||
+                     "https://placehold.co/500x500?text=No+Cover",
+        sourcepath: (song.more_info?.media_preview_url || "").replace(".mp4", ".mp3"),
+        duration: formatDuration(song.more_info?.duration || song.duration),
+        album: song.more_info?.album || "Unknown Album",
+        year: song.year || new Date().getFullYear().toString()
+      }));
+
+      setState(prev => ({
+        ...prev,
+        songs: formattedSongs,
+        loading: false
+      }));
+    } catch (err) {
+      setState(prev => ({
+        ...prev,
+        error: err.message || "Failed to fetch songs. Please try again.",
+        loading: false
+      }));
+    }
+  };
+
+  useEffect(() => {
+    searchSongs("trending");
+  }, []);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (state.searchQuery.trim()) {
+      searchSongs(state.searchQuery.trim());
+    }
+  };
+
+  return (
+    <div className="home">
+      <form className="search-form" onSubmit={handleSubmit}>
+        <input 
+          type="text" 
+          placeholder="What do you want to play?" 
+          value={state.searchQuery}
+          onChange={(e) => setState(prev => ({ ...prev, searchQuery: e.target.value }))}
+          aria-label="Search for songs"
+        />
+        <button 
+          className="button" 
+          type="submit" 
+          disabled={state.loading}
+          aria-busy={state.loading}
+        >
+          {state.loading ? (
+            <>
+              <span className="spinner" aria-hidden="true"></span>
+              <span>🔎</span>
+            </>
+          ) : (
+            "🔎"
+          )}
+        </button>
+      </form>
+
+      {state.error && (
+        <div className="error-message" role="alert">
+          <p>{state.error}</p>
+          <button 
+            onClick={() => searchSongs(state.searchQuery || "trending")} 
+            className="retry-button"
+          >
+            Retry Search
+          </button>
         </div>
       )}
-      {isPlaying ? <Player /> : null}
-     
+
+      {state.loading ? (
+        <div className="loading">
+          <LoadingScreen />
+        </div>
+      ) : (
+        <>
+          {state.songs.length > 0 ? (
+            <div className="movies-grid">
+              {state.songs.map((song) => (
+                <SongCard 
+                  song={song} 
+                  key={song.id} 
+                  onClick={() => handleSongSelect(song)}
+                  isPlaying={state.currentSong?.id === song.id && state.isPlaying}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="no-results">
+              <p>No songs found. Try a different search.</p>
+            </div>
+          )}
+        </>
+      )}
+
+      {state.currentSong && (
+        <Player 
+          currentSong={state.currentSong}
+          onPlayPause={(playing) => setState(prev => ({ ...prev, isPlaying: playing }))}
+        />
+      )}
     </div>
   );
 }

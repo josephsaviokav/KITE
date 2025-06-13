@@ -1,102 +1,70 @@
-/* Player.css */
-
 .player-container {
   position: fixed;
   bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 80%;
-  bottom: 10px;
-  max-width: 80%;
-  background: #1e1e1e;
-  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.4);
-  padding: 0.5rem 1rem; /* Reduced padding */
-  z-index: 1000;
-  color: white;
+  left: 0;
+  right: 0;
+  background: #fff;
+  padding: 1rem;
+  box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
   display: flex;
-  flex-direction: column;
-  gap: 0.5rem; /* Smaller gap */
- border-radius: 20px;
-  overflow: hidden;
-  transition: 1s ease-in-out;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
 }
-
-.progress-bar {
-  width: 100%;
-  accent-color: #e21616;
-  height: 4px; /* Optionally reduce height */
-  cursor: pointer;
-  top:10px;
-  position: relative;
-}
-
-
 
 .player-info {
   display: flex;
   align-items: center;
-  gap: 0.75rem; 
-  top: 15px;
-  position: relative;
+  gap: 1rem;
+  min-width: 200px;
 }
 
 .album-cover {
-  width: 40px; 
-  height: 40px;
-  border-radius: 8px;
+  width: 50px;
+  height: 50px;
   object-fit: cover;
+  border-radius: 4px;
 }
 
-.track-details {
-  display: flex;
-  flex-direction: column;
+.track-info {
+  white-space: nowrap;
+  overflow: hidden;
 }
 
-.track-title {
-  font-size: 0.95rem; /* Smaller font */
-  font-weight: 600;
+.track-info h3 {
   margin: 0;
+  font-size: 1rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.track-artist {
-  font-size: 0.8rem; /* Smaller font */
-  color: #ccc;
+.track-info p {
   margin: 0;
+  font-size: 0.8rem;
+  color: #666;
 }
 
 .player-controls {
   display: flex;
-  justify-content: center;
   align-items: center;
-  gap: 1rem; /* Reduced gap */
-  bottom: 10px;
-  position: relative;
+  gap: 1rem;
+  flex-grow: 1;
+  max-width: 600px;
 }
 
-.control-button,
-.play-button {
+.progress-bar {
+  flex-grow: 1;
+  height: 4px;
+  cursor: pointer;
+}
+
+.play-button, .volume-button {
   background: none;
   border: none;
-  color: white;
   cursor: pointer;
-  transition: 0.2s ease;
-}
-.control-button:hover,
-.play-button:hover {
-  transform: scale(1.1);
-  color:red;
-}
-.play-button {
-  background-color: #ae1b1b;
-  border-radius: 30px;
-  padding: 0.5rem; /* Smaller button */
-  font-size: 0.9rem;
-  color: #ccc;
-  width: 100px;
-  text-align: center;
+  color: #333;
 }
 
-.play-button:hover {
-  background-color: #c11010;
-  color: black;
+.play-button:hover, .volume-button:hover {
+  color: #1db954;
 }

@@ -1,31 +1,48 @@
 .movie-card {
   position: relative;
-  border-top-left-radius: 8em;
-  border-top-right-radius: 8em;
-  border-bottom-left-radius: 2em;
-  border-bottom-right-radius: 2em;
   overflow: hidden;
   background-color: #1a1a1a;
   transition: transform 0.2s;
   height: 100%;
   display: flex;
+  margin-top: 10px;
   flex-direction: column;
-  
+  border-radius: 2em;
+}
+
+.movie-hover-message {
+  color: #e9eae9;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  opacity: 0;
+position: relative;
+left: 25%;
+  transition: opacity 0.2s;
+}
+
+.movie-card:hover .movie-hover-message {
+  opacity: 1;
+    left: 25%;
 }
 
 .movie-card:hover {
   transform: translateY(-5px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+
+  
 }
 
 .movie-poster {
   position: relative;
-  aspect-ratio: 3/3;
+  aspect-ratio: 2/3;
   width: 100%;
 }
 
 .movie-poster img {
   width: 100%;
   height: 100%;
+
   object-fit: cover;
 }
 
@@ -37,7 +54,7 @@
   bottom: 0;
   background: linear-gradient(
     to bottom,
-    rgba(0, 0, 0, 0.1),
+    rgba(89, 88, 88, 0.1),
     rgba(0, 0, 0, 0.8)
   );
   opacity: 0;
