@@ -7,6 +7,7 @@ export default function Player({ currentSong, isPlaying, onPlayPause }) {
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
   const [isMuted, setIsMuted] = useState(false);
+  const [volume, setVolume] = useState(100); // Default volume at 100%
 
   const togglePlay = async () => {
     const audio = audioRef.current;
@@ -28,8 +29,11 @@ export default function Player({ currentSong, isPlaying, onPlayPause }) {
 
   const updateProgress = () => {
     const audio = audioRef.current;
-    if (audio && duration > 0) {
-      setProgress((audio.currentTime / duration) * 100);
+    if (audio && audio.duration) {
+      const current = audio.currentTime;
+      const total = audio.duration;
+      setProgress((current / total) * 100);
+      setDuration(total);
     }
   };
 
@@ -44,22 +48,44 @@ export default function Player({ currentSong, isPlaying, onPlayPause }) {
   const toggleMute = () => {
     const audio = audioRef.current;
     if (!audio) return;
-    audio.muted = !isMuted;
-    setIsMuted(!isMuted);
+    const newMuteStatus = !isMuted;
+    audio.muted = newMuteStatus;
+    setIsMuted(newMuteStatus);
+  };
+
+  const handleVolumeChange = (e) => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    const value = Number(e.target.value);
+    audio.volume = value / 100;
+    setVolume(value);
+    if (value === 0) {
+      setIsMuted(true);
+      audio.muted = true;
+    } else {
+      setIsMuted(false);
+      audio.muted = false;
+    }
+  };
+
+  const formatTime = (time) => {
+    const minutes = Math.floor(time / 60) || 0;
+    const seconds = Math.floor(time % 60) || 0;
+    return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
   };
 
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio || !currentSong?.sourcepath) return;
 
-    // Set up audio source
     audio.src = currentSong.sourcepath;
     audio.load();
+    audio.volume = volume / 100;
 
     const handleLoadedMetadata = () => {
       setDuration(audio.duration || 0);
       if (isPlaying) {
-        audio.play().catch(err => {
+        audio.play().catch((err) => {
           console.error("Auto-play failed:", err);
           onPlayPause(false);
         });
@@ -86,7 +112,7 @@ export default function Player({ currentSong, isPlaying, onPlayPause }) {
 
       <div className="player-info">
         <img
-          src={currentSong?.primaryImage || "https://placehold.co/150?text=No+Cover"}
+          src={currentSong?.primaryImage || "https://placehold.co/100x100?text=No+Cover"}
           alt={currentSong?.title || "No Cover"}
           className="album-cover"
         />
@@ -97,22 +123,38 @@ export default function Player({ currentSong, isPlaying, onPlayPause }) {
       </div>
 
       <div className="player-controls">
+        <div className="time-display">
+          <span>{formatTime((progress / 100) * duration)}</span>
+          <input
+            type="range"
+            min="0"
+            max="100"
+            value={progress}
+            onChange={handleSeek}
+            className="progress-bar"
+          />
+          <span>{formatTime(duration)}</span>
+        </div>
+
+        <div className="control-buttons">
+          <button onClick={togglePlay} className="play-button" aria-label="Play/Pause">
+            {isPlaying ? <Pause size={24} /> : <Play size={24} />}
+          </button>
+        </div>
+      </div>
+
+      <div className="volume-control">
+        <button onClick={toggleMute} className="volume-button" aria-label="Mute/Unmute">
+          {isMuted ? <VolumeX size={24} /> : <Volume2 size={24} />}
+        </button>
         <input
           type="range"
           min="0"
           max="100"
-          value={progress}
-          onChange={handleSeek}
-          className="progress-bar"
+          value={volume}
+          onChange={handleVolumeChange}
+          className="volume-slider"
         />
-
-        <button onClick={togglePlay} className="play-button" aria-label="Play/Pause">
-          {isPlaying ? <Pause size={24} /> : <Play size={24} />}
-        </button>
-
-        <button onClick={toggleMute} className="volume-button" aria-label="Mute/Unmute">
-          {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
-        </button>
       </div>
     </div>
   );

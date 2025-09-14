@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { fetchSongs } from "../utils/api";
+import { fetchSongs, fetchSongUrl } from "../utils/api";
 import SongCard from "../components/SongCard";
 import LoadingScreen from "../components/LoadingScreen";
 import Player from "../components/Player";
@@ -22,17 +22,51 @@ export default function Home() {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
-  const handleSongSelect = (song) => {
-    if (!song?.sourcepath) {
-      alert("Song URL is invalid or missing.");
+  // const handleSongSelect = (song) => {
+  //   if (!song?.sourcepath) {
+  //     alert("Song URL is invalid or missing.");
+  //     return;
+  //   }
+  //   console.log("Selected:", song.title, "→ URL:", song.sourcepath);
+  //   setState(prev => ({
+  //     ...prev,
+  //     currentSong: song,
+  //     isPlaying: true
+  //   }));
+  // };
+ 
+  const handleSongSelect = async (song) => {
+    console.log("Selected song object:", song);
+    
+    if (!song?.id) {
+      alert("Song ID is invalid or missing.");
       return;
     }
-    console.log("Selected:", song.title, "→ URL:", song.sourcepath);
-    setState(prev => ({
-      ...prev,
-      currentSong: song,
-      isPlaying: true
-    }));
+    
+    setState(prev => ({ ...prev, loading: true }));
+    
+    try {
+      // Fetch the real playable URL from backend
+      const realUrl = await fetchSongUrl(song.id);
+      if (!realUrl) {
+        alert("Could not fetch playable song URL.");
+        setState(prev => ({ ...prev, loading: false }));
+        return;
+      }
+      
+      console.log("Real song URL:", realUrl);
+      
+      setState(prev => ({
+        ...prev,
+        currentSong: { ...song, sourcepath: realUrl },
+        isPlaying: true,
+        loading: false
+      }));
+    } catch (error) {
+      console.error("Error fetching song URL:", error);
+      alert("Failed to load song. Please try again.");
+      setState(prev => ({ ...prev, loading: false }));
+    }
   };
 
   const searchSongs = async (query) => {
@@ -45,19 +79,41 @@ export default function Home() {
         throw new Error("No songs found. Try a different search term.");
       }
 
-      const formattedSongs = results.map((song, index) => ({
-        id: song.id || song.perma_url || `song-${index}`,
-        title: song.song || song.heading?.title || "Untitled Track",
-        artist: song.primary_artists || song.artist?.name || song.heading?.subtitle || "Unknown Artist",
-        primaryImage: song.image?.replace("150x150", "500x500") ||
-                     song.image?.replace("150", "500") ||
-                     song.thumbnail ||
-                     "https://placehold.co/500x500?text=No+Cover",
-        sourcepath: (song.more_info?.media_preview_url || "").replace(".mp4", ".mp3"),
-        duration: formatDuration(song.more_info?.duration || song.duration),
-        album: song.more_info?.album || "Unknown Album",
-        year: song.year || new Date().getFullYear().toString()
-      }));
+      // const formattedSongs = results.map((song, index) => ({
+      //   id: song.id || song.perma_url || `song-${index}`,
+      //   title: song.song || song.heading?.title || "Untitled Track",
+      //   artist: song.primary_artists || song.artist?.name || song.heading?.subtitle || "Unknown Artist",
+      //   primaryImage: song.image?.replace("150x150", "500x500") ||
+      //                song.image?.replace("150", "500") ||
+      //                song.thumbnail ||
+      //                "https://placehold.co/500x500?text=No+Cover",
+      //   sourcepath: (song.more_info?.media_preview_url || "").replace(".mp4", ".mp3"),
+      //   duration: formatDuration(song.more_info?.duration || song.duration),
+      //   album: song.more_info?.album || "Unknown Album",
+      //   year: song.year || new Date().getFullYear().toString()
+      // }));
+
+     const formattedSongs = results
+  .map((song, index) => {
+    const rawUrl = "http://aac.saavncdn.com/665/7790c3b9097592113008eaf1031d6e57_12.mp4"
+    const sourcepath = rawUrl ? rawUrl : null;
+
+    return {
+      id: song.id || song.perma_url || `song-${index}`,
+      title: song.song || song.heading?.title || "Untitled Track",
+      artist: song.primary_artists || song.artist?.name || song.heading?.subtitle || "Unknown Artist",
+      primaryImage: song.image?.replace("150x150", "500x500") ||
+                    song.image?.replace("150", "500") ||
+                    song.thumbnail ||
+                    "https://placehold.co/500x500?text=No+Cover",
+      sourcepath: sourcepath,
+      duration: formatDuration(song.more_info?.duration || song.duration),
+      album: song.more_info?.album || "Unknown Album",
+      year: song.year || new Date().getFullYear().toString()
+    };
+  })
+  // .filter(song => !!song.sourcepath); // ✅ Add this line here
+
 
       setState(prev => ({
         ...prev,
@@ -148,12 +204,15 @@ export default function Home() {
         </>
       )}
 
-      {state.currentSong && (
-        <Player 
-          currentSong={state.currentSong}
-          onPlayPause={(playing) => setState(prev => ({ ...prev, isPlaying: playing }))}
-        />
-      )}
+  {state.currentSong && (
+  <Player 
+    currentSong={state.currentSong}
+    isPlaying={state.isPlaying}
+    onPlayPause={(playing) => setState(prev => ({ ...prev, isPlaying: playing }))}
+  />
+)}
+
+
     </div>
   );
 }

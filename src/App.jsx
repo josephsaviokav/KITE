@@ -10,6 +10,7 @@ import Player from "./components/Player";
 
 function App() {
   const [currentSong, setCurrentSong] = useState(null);
+  
 
   return (
     <div>

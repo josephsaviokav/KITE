@@ -19,4 +19,4 @@ also enable the player option
 
 also the songcard problem the name of song and artist
 
-study the working
+study the working of home.jsx,songcard.jsx,server.js,player.js
