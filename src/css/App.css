@@ -1,0 +1,26 @@
+/* Global styles for player spacing */
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Ensure all pages have space for the fixed player */
+.app-container {
+  min-height: 100vh;
+  transition: padding-bottom 0.3s ease;
+}
+
+.app-container.has-player {
+  padding-bottom: 120px;
+}
+
+/* Ensure content doesn't get cut off by the player */
+.page-content {
+  padding-bottom: 20px;
+}
+
+/* Smooth transitions for all player-related animations */
+* {
+  box-sizing: border-box;
+}

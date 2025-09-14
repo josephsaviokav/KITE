@@ -2,10 +2,9 @@ import { useState, useEffect } from "react";
 import { fetchSongs, fetchSongUrl } from "../utils/api";
 import SongCard from "../components/SongCard";
 import LoadingScreen from "../components/LoadingScreen";
-import Player from "../components/Player";
 import "../css/Home.css";
 
-export default function Home() {
+export default function Home({ onSongSelect }) {
   const [state, setState] = useState({
     error: null,
     loading: false,
@@ -56,12 +55,19 @@ export default function Home() {
       
       console.log("Real song URL:", realUrl);
       
+      const songWithUrl = { ...song, sourcepath: realUrl };
+      
       setState(prev => ({
         ...prev,
-        currentSong: { ...song, sourcepath: realUrl },
+        currentSong: songWithUrl,
         isPlaying: true,
         loading: false
       }));
+      
+      // Call the parent callback to set the global player
+      if (onSongSelect) {
+        onSongSelect(songWithUrl);
+      }
     } catch (error) {
       console.error("Error fetching song URL:", error);
       alert("Failed to load song. Please try again.");
@@ -203,15 +209,6 @@ export default function Home() {
           )}
         </>
       )}
-
-  {state.currentSong && (
-  <Player 
-    currentSong={state.currentSong}
-    isPlaying={state.isPlaying}
-    onPlayPause={(playing) => setState(prev => ({ ...prev, isPlaying: playing }))}
-  />
-)}
-
 
     </div>
   );
