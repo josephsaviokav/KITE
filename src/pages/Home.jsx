@@ -4,14 +4,16 @@ import SongCard from "../components/SongCard";
 import LoadingScreen from "../components/LoadingScreen";
 import "../css/Home.css";
 
-export default function Home({ onSongSelect }) {
+export default function Home({ onSongSelect, onSongsUpdate }) {
   const [state, setState] = useState({
     error: null,
     loading: false,
     searchQuery: "",
     songs: [],
+    allSongs: [], // Store all fetched songs
     currentSong: null,
-    isPlaying: false
+    isPlaying: false,
+    currentIndex: 0 // Track which 5 songs to display
   });
 
   const formatDuration = (seconds) => {
@@ -124,8 +126,15 @@ export default function Home({ onSongSelect }) {
       setState(prev => ({
         ...prev,
         songs: formattedSongs,
+        allSongs: formattedSongs, // Store all songs
+        currentIndex: 0, // Reset index
         loading: false
       }));
+
+      // Pass all songs to parent component
+      if (onSongsUpdate) {
+        onSongsUpdate(formattedSongs);
+      }
     } catch (err) {
       setState(prev => ({
         ...prev,
@@ -135,8 +144,36 @@ export default function Home({ onSongSelect }) {
     }
   };
 
+  // Rotate songs every 5 seconds
   useEffect(() => {
-    searchSongs("trending");
+    if (state.allSongs.length > 5) {
+      const interval = setInterval(() => {
+        setState(prev => {
+          const nextIndex = (prev.currentIndex + 5) % prev.allSongs.length;
+          return {
+            ...prev,
+            currentIndex: nextIndex,
+            songs: prev.allSongs.slice(nextIndex, nextIndex + 5)
+          };
+        });
+      }, 5000); // Change every 5 seconds
+
+      return () => clearInterval(interval);
+    }
+  }, [state.allSongs]);
+
+  // Set initial 5 songs when allSongs is populated
+  useEffect(() => {
+    if (state.allSongs.length > 0) {
+      setState(prev => ({
+        ...prev,
+        songs: prev.allSongs.slice(0, 5)
+      }));
+    }
+  }, [state.allSongs.length]);
+
+  useEffect(() => {
+    searchSongs("english songs");
   }, []);
 
   const handleSubmit = (e) => {

@@ -1,8 +1,8 @@
 import { useRef, useEffect, useState } from "react";
-import { Play, Pause, Volume2, VolumeX } from "lucide-react";
+import { Play, Pause, Volume2, VolumeX, SkipBack, SkipForward } from "lucide-react";
 import "../css/Player.css";
 
-export default function Player({ currentSong, isPlaying, onPlayPause }) {
+export default function Player({ currentSong, isPlaying, onPlayPause, onSongEnd, onNext, onPrevious, loading }) {
   const audioRef = useRef(null);
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -92,7 +92,13 @@ export default function Player({ currentSong, isPlaying, onPlayPause }) {
       }
     };
 
-    const handleEnded = () => onPlayPause(false);
+    const handleEnded = () => {
+      onPlayPause(false);
+      // Trigger next random song
+      if (onSongEnd) {
+        onSongEnd();
+      }
+    };
 
     audio.addEventListener("loadedmetadata", handleLoadedMetadata);
     audio.addEventListener("timeupdate", updateProgress);
@@ -137,8 +143,20 @@ export default function Player({ currentSong, isPlaying, onPlayPause }) {
         </div>
 
         <div className="control-buttons">
-          <button onClick={togglePlay} className="play-button" aria-label="Play/Pause">
-            {isPlaying ? <Pause size={24} /> : <Play size={24} />}
+          <button onClick={onPrevious} className="skip-button" aria-label="Previous" disabled={loading}>
+            <SkipBack size={20} />
+          </button>
+          <button onClick={togglePlay} className="play-button" aria-label="Play/Pause" disabled={loading}>
+            {loading ? (
+              <span className="loading-spinner"></span>
+            ) : isPlaying ? (
+              <Pause size={24} />
+            ) : (
+              <Play size={24} />
+            )}
+          </button>
+          <button onClick={onNext} className="skip-button" aria-label="Next" disabled={loading}>
+            <SkipForward size={20} />
           </button>
         </div>
       </div>
