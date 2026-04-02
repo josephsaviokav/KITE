@@ -35,7 +35,81 @@ function App() {
   };
 
   const handleSongEnd = () => {
-    handleNextSong();
+    handleNextSongRandom();
+  };
+
+  // Get the next alphabet letter (5 positions ahead, wrapping around)
+  const getNextAlphabetLetter = (firstLetter) => {
+    if (!firstLetter || !isNaN(firstLetter)) return null; // If starts with number, return null
+    
+    const letter = firstLetter.toUpperCase();
+    const charCode = letter.charCodeAt(0);
+    
+    // Only work with A-Z
+    if (charCode < 65 || charCode > 90) return null;
+    
+    // Get index (A=0, B=1, ..., Z=25)
+    const index = charCode - 65;
+    
+    // Calculate next index (5 positions ahead, wrapping around)
+    const nextIndex = (index + 5) % 26;
+    
+    // Convert back to letter
+    return String.fromCharCode(65 + nextIndex);
+  };
+
+  const handleNextSongRandom = async () => {
+    if (availableSongs.length === 0) return;
+
+    setLoading(true);
+    
+    try {
+      // Get first letter of current song title
+      const currentTitle = currentSong?.title || "";
+      const firstLetter = currentTitle.charAt(0);
+      
+      // Get the target letter (5 alphabets ahead)
+      const targetLetter = getNextAlphabetLetter(firstLetter);
+      
+      // Filter songs that start with the target letter
+      let candidateSongs = availableSongs;
+      
+      if (targetLetter) {
+        candidateSongs = availableSongs.filter(song => 
+          song.title && song.title.charAt(0).toUpperCase() === targetLetter
+        );
+      }
+      
+      // If no songs match, pick a random song from all available
+      if (candidateSongs.length === 0) {
+        candidateSongs = availableSongs;
+      }
+      
+      // Pick a random song from candidates
+      const randomIndex = Math.floor(Math.random() * candidateSongs.length);
+      const nextSong = candidateSongs[randomIndex];
+      
+      if (!nextSong) {
+        setLoading(false);
+        return;
+      }
+      
+      // Fetch the real playable URL from backend
+      const realUrl = await fetchSongUrl(nextSong.id);
+      if (!realUrl) {
+        console.error("Could not fetch playable song URL.");
+        setLoading(false);
+        return;
+      }
+      
+      const songWithUrl = { ...nextSong, sourcepath: realUrl };
+      setCurrentSong(songWithUrl);
+      setIsPlaying(true);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching random song:", error);
+      setLoading(false);
+    }
   };
 
   const handleNextSong = async () => {
