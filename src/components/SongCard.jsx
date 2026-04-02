@@ -15,12 +15,12 @@ function SongCard({ song, onClick, isPlaying }) {
 
   return (
     <div
-      className={`movie-card ${isPlaying ? "playing" : ""}`}
+      className={`circular-card ${isPlaying ? "playing" : ""}`}
       onClick={() => {
         if (typeof onClick === "function") onClick();
       }}
     >
-      <div className="movie-poster">
+      <div className="circular-image-container">
         {!imageLoaded && !imageError && <div className="image-placeholder"></div>}
 
         <img
@@ -29,10 +29,10 @@ function SongCard({ song, onClick, isPlaying }) {
           loading="lazy"
           onLoad={() => setImageLoaded(true)}
           onError={handleImageError}
-          className={`song-image ${imageLoaded ? "loaded" : ""}`}
+          className={`circular-image ${imageLoaded ? "loaded" : ""}`}
         />
 
-        <div className="movie-overlay">
+        <div className="circular-overlay">
           {isPlaying ? (
             <div className="playing-pulse">
               <span></span>
@@ -40,18 +40,18 @@ function SongCard({ song, onClick, isPlaying }) {
               <span></span>
             </div>
           ) : (
-            <button className="play-button" aria-label="Play">
+            <button className="circular-play-button" aria-label="Play">
               <Play size={24} fill="white" />
             </button>
           )}
         </div>
       </div>
 
-      <div className="movie-info">
-        <h3>{ song.title || "Unknown Track"}</h3>
-        <p className="artist">{song.artist}</p>
+      <div className="circular-info">
+        <h3 className="circular-title">{ song.title || "Unknown Track"}</h3>
+        <p className="circular-artist">{song.artist}</p>
         {song.year && song.year.toLowerCase() !== "unknown" && (
-          <p className="year">{song.year}</p>
+          <p className="circular-year">{song.year}</p>
         )}
       </div>
     </div>

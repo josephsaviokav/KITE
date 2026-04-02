@@ -144,23 +144,23 @@ export default function Home({ onSongSelect, onSongsUpdate }) {
     }
   };
 
-  // Rotate songs every 5 seconds
-  useEffect(() => {
-    if (state.allSongs.length > 5) {
-      const interval = setInterval(() => {
-        setState(prev => {
-          const nextIndex = (prev.currentIndex + 5) % prev.allSongs.length;
-          return {
-            ...prev,
-            currentIndex: nextIndex,
-            songs: prev.allSongs.slice(nextIndex, nextIndex + 5)
-          };
-        });
-      }, 5000); // Change every 5 seconds
+  // Auto-rotation disabled - songs stay on page after search
+  // useEffect(() => {
+  //   if (state.allSongs.length > 5) {
+  //     const interval = setInterval(() => {
+  //       setState(prev => {
+  //         const nextIndex = (prev.currentIndex + 5) % prev.allSongs.length;
+  //         return {
+  //           ...prev,
+  //           currentIndex: nextIndex,
+  //           songs: prev.allSongs.slice(nextIndex, nextIndex + 5)
+  //         };
+  //       });
+  //     }, 5000); // Change every 5 seconds
 
-      return () => clearInterval(interval);
-    }
-  }, [state.allSongs]);
+  //     return () => clearInterval(interval);
+  //   }
+  // }, [state.allSongs]);
 
   // Set initial 5 songs when allSongs is populated
   useEffect(() => {
