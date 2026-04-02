@@ -27,6 +27,19 @@ const jioHeaders = {
 	'Accept': 'application/json'
 };
 
+// Root endpoint - Health check
+app.get('/', (req, res) => {
+	res.json({ 
+		message: 'KITE Music API Server is running',
+		status: 'ok',
+		version: '1.0.0',
+		endpoints: {
+			search: '/api/search?q=<query>',
+			getSong: '/getSong?id=<songId>'
+		}
+	});
+});
+
 // Search endpoint
 app.get('/api/search', async (req, res) => {
 	try {
